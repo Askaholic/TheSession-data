@@ -1,9 +1,11 @@
 import csv
+import os
 import sqlite3
+import sys
 
 
-def main():
-    conn = sqlite3.connect('tunes.db')
+def main(infile_name, outfile_name):
+    conn = sqlite3.connect(outfile_name)
     c = conn.cursor()
     c.execute(
         '''CREATE TABLE tunes (
@@ -19,7 +21,7 @@ def main():
         )'''
     )
 
-    with open('csv/tunes.csv') as f:
+    with open(infile_name) as f:
         reader = csv.reader(f, delimiter=",", skipinitialspace=True, escapechar="\\")
         next(reader)
         for row in reader:
@@ -36,4 +38,11 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) > 2:
+        infile = sys.argv[1]
+        outfile = sys.argv[2]
+    else:
+        infile = os.path.join('csv', 'tunes.csv')
+        outfile = 'tunes.db'
+
+    main(infile, outfile)
